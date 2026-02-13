@@ -1,16 +1,14 @@
-# vaultify
+# Vaultify
 
-A new Flutter project.
+Vaultify merupakan aplikasi yang berguna untuk menyimpan semua password dengan aman, praktis, dan pintar dalam satu tempat. 🔐✨
 
-## Getting Started
+## Fitur Utama
+- **Keamanan Biometrik**: Kunci data kamu dengan sidik jari atau wajah.
+- **Penyimpanan Lokal (Hive)**: Data tersimpan aman di perangkat kamu, bukan di cloud.
+- **Tampilan Modern**: UI bersih dengan dukungan Dark/Light mode.
+- **Search Cepat**: Temukan akun kamu seketika.
 
-This project is a starting point for a Flutter application.
+## Author
+**Gansputra**
+- [GitHub](https://github.com/Gansputra/) | [Instagram](https://instagram.com/gans.putra_)
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.

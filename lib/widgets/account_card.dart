@@ -99,19 +99,19 @@ class AccountCard extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Account?'),
-        content: Text('Are you sure you want to delete ${account.serviceName}?'),
+        title: const Text('Hapus Akun?'),
+        content: Text('Apakah kamu yakin ingin menghapus ${account.serviceName}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Tidak Jadi'),
           ),
           TextButton(
             onPressed: () {
               context.read<AccountProvider>().deleteAccount(account);
               Navigator.pop(context);
             },
-            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
+            child: const Text('Hapus', style: TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),

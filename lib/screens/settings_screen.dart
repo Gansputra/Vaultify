@@ -24,20 +24,13 @@ class SettingsScreen extends StatelessWidget {
           _buildSettingsTile(
             context,
             icon: Icons.fingerprint_rounded,
-            title: 'Biometric Unlock',
-            subtitle: 'Fingerprint / Face ID',
+            title: 'Kunci Biometrik',
+            subtitle: 'Sidik Jari / Biometrik',
             trailing: Switch(
               value: settings.biometricEnabled,
               onChanged: (val) => settings.toggleBiometric(val),
               activeColor: Theme.of(context).colorScheme.primary,
             ),
-          ),
-          _buildSettingsTile(
-            context,
-            icon: Icons.timer_outlined,
-            title: 'Auto Lock Timer',
-            subtitle: 'Immediately',
-            onTap: () {},
           ),
           const SizedBox(height: 24),
           _buildSectionHeader('Appearance'),

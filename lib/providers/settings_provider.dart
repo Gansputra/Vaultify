@@ -13,7 +13,11 @@ class SettingsProvider with ChangeNotifier {
   bool get isDarkMode => _isDarkMode;
 
   SettingsProvider() {
-    _loadSettings();
+    _init();
+  }
+
+  Future<void> _init() async {
+    await _loadSettings();
   }
 
   Future<void> _loadSettings() async {
@@ -34,4 +38,5 @@ class SettingsProvider with ChangeNotifier {
     await _prefs.setBool(_themeKey, value);
     notifyListeners();
   }
+
 }

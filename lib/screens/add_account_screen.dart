@@ -38,7 +38,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Account saved successfully!'),
+          content: const Text('Akun Berhasil Di Save!'),
           backgroundColor: Theme.of(context).colorScheme.primary,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -53,7 +53,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add New Account'),
+        title: const Text('Tambah Akun Baru'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -63,7 +63,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Service Details',
+                'Detail Akun',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -73,11 +73,11 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
               const SizedBox(height: 20),
               CustomTextField(
                 controller: _serviceController,
-                label: 'Service Name',
+                label: 'Nama Layanan',
                 hint: 'e.g. Google, Netflix, Spotify',
                 icon: Icons.account_balance_wallet_rounded,
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter service name' : null,
+                    value == null || value.isEmpty ? 'Isi Nama Layanan Dulu Bro' : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
@@ -86,7 +86,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 hint: 'e.g. john.doe@mail.com',
                 icon: Icons.alternate_email_rounded,
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter username' : null,
+                    value == null || value.isEmpty ? 'Isi Username Dulu Bro' : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
@@ -103,13 +103,13 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter password' : null,
+                    value == null || value.isEmpty ? 'Isi Password Dulu Bro' : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _notesController,
-                label: 'Notes (Optional)',
-                hint: 'Additional information',
+                label: 'Catatan (Optional)',
+                hint: 'Informasi Tambahan',
                 icon: Icons.notes_rounded,
                 maxLines: 3,
               ),

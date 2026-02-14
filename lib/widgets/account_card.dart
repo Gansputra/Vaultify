@@ -67,10 +67,10 @@ class AccountCard extends StatelessWidget {
                   children: [
                     Text(
                       account.serviceName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -78,7 +78,7 @@ class AccountCard extends StatelessWidget {
                       account.username,
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey[400],
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(180),
                       ),
                     ),
                   ],
@@ -132,10 +132,12 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF1E1E1E),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -170,9 +172,13 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                 children: [
                   Text(
                     widget.account.serviceName,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 22, 
+                      fontWeight: FontWeight.bold, 
+                      color: Theme.of(context).textTheme.bodyLarge?.color
+                    ),
                   ),
-                  const Text('Account Details', style: TextStyle(color: Colors.grey)),
+                  Text('Account Details', style: TextStyle(color: Theme.of(context).disabledColor)),
                 ],
               ),
             ],
@@ -199,10 +205,10 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
             child: ElevatedButton(
               onPressed: () => Navigator.pop(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.grey[800],
+                backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(200),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text('Close', style: TextStyle(color: Colors.white)),
+              child: const Text('Close', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 16),
@@ -244,7 +250,9 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
           width: double.infinity,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: const Color(0xFF2C2C2C),
+            color: Theme.of(context).brightness == Brightness.dark 
+                ? const Color(0xFF2C2C2C) 
+                : Colors.grey.withAlpha(20),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -252,7 +260,11 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
               Expanded(
                 child: Text(
                   isPassword && obscure ? '•' * 12 : value,
-                  style: const TextStyle(color: Colors.white, fontSize: 16, letterSpacing: 1),
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color, 
+                    fontSize: 16, 
+                    letterSpacing: isPassword && obscure ? 2 : 1
+                  ),
                 ),
               ),
               if (isPassword)

@@ -35,6 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0A), // Force Dark Background
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -43,22 +44,22 @@ class _SplashScreenState extends State<SplashScreen> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [
-                    Theme.of(context).colorScheme.primary,
-                    Theme.of(context).colorScheme.secondary,
+                    Color(0xFF6C63FF),
+                    Color(0xFF00D2FF),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(128),
+                    color: const Color(0xFF6C63FF).withAlpha(128),
                     blurRadius: 20,
                     spreadRadius: 2,
                   ),
                 ],
               ),
               child: const Icon(
-                Icons.enhanced_encryption_rounded, // Modern icon representation of Vaultify
+                Icons.enhanced_encryption_rounded,
                 size: 80,
                 color: Colors.white,
               ),
@@ -76,7 +77,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white,
                 shadows: [
                   Shadow(
-                    color: Theme.of(context).colorScheme.primary.withAlpha(128),
+                    color: const Color(0xFF6C63FF).withAlpha(128),
                     blurRadius: 10,
                   ),
                 ],

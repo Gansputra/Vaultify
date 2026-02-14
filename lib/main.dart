@@ -30,14 +30,38 @@ class VaultifyApp extends StatelessWidget {
             themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
             theme: ThemeData(
               useMaterial3: true,
+              brightness: Brightness.light,
               colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color(0xFF6C63FF),
                 brightness: Brightness.light,
+                primary: const Color(0xFF6C63FF),
+                surface: const Color(0xFFF8F9FA),
               ),
+              scaffoldBackgroundColor: const Color(0xFFF8F9FA),
               textTheme: GoogleFonts.outfitTextTheme(),
+              appBarTheme: AppBarTheme(
+                backgroundColor: const Color(0xFFF8F9FA),
+                elevation: 0,
+                centerTitle: true,
+                titleTextStyle: GoogleFonts.outfit(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                iconTheme: const IconThemeData(color: Colors.black87),
+              ),
+              cardTheme: CardThemeData(
+                color: Colors.white,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.grey.withAlpha(20)),
+                ),
+              ),
             ),
             darkTheme: ThemeData(
               useMaterial3: true,
+              brightness: Brightness.dark,
               colorScheme: ColorScheme.fromSeed(
                 seedColor: const Color(0xFF6C63FF),
                 brightness: Brightness.dark,
@@ -56,10 +80,11 @@ class VaultifyApp extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
+                iconTheme: const IconThemeData(color: Colors.white),
               ),
               cardTheme: CardThemeData(
                 color: const Color(0xFF1E1E1E),
-                elevation: 8,
+                elevation: 4,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

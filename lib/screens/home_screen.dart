@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (context) => const AddAccountScreen()),
           );
         },
-        label: const Text('New Account'),
+        label: const Text('Tambah Akun'),
         icon: const Icon(Icons.add_rounded),
       ).animate().scale(delay: 500.ms),
       body: Column(
@@ -67,13 +67,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.read<AccountProvider>().setSearchQuery(value);
               },
               decoration: InputDecoration(
-                hintText: 'Search services...',
+                hintText: 'Cari Akun...',
                 prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF6C63FF)),
                 filled: true,
-                fillColor: const Color(0xFF1E1E1E),
+                fillColor: Theme.of(context).cardTheme.color,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
+                  borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
                 ),
                 contentPadding: const EdgeInsets.symmetric(vertical: 0),
               ),
@@ -90,13 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(
                           Icons.security_rounded,
                           size: 100,
-                          color: Colors.grey[800],
+                          color: Theme.of(context).disabledColor.withAlpha(50),
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'No accounts stored yet',
+                          'Belum Ada Akun Tersimpan',
                           style: TextStyle(
-                            color: Colors.grey[600],
+                            color: Theme.of(context).disabledColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
                           ),

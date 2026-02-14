@@ -30,4 +30,22 @@ class Account extends HiveObject {
     this.notes,
     required this.createdAt,
   });
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'serviceName': serviceName,
+    'username': username,
+    'password': password,
+    'notes': notes,
+    'createdAt': createdAt.toIso8601String(),
+  };
+
+  factory Account.fromJson(Map<String, dynamic> json) => Account(
+    id: json['id'],
+    serviceName: json['serviceName'],
+    username: json['username'],
+    password: json['password'],
+    notes: json['notes'],
+    createdAt: DateTime.parse(json['createdAt']),
+  );
 }

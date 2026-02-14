@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/account_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -21,6 +22,7 @@ class SettingsScreen extends StatelessWidget {
         children: [
           _buildSectionHeader('Security'),
           _buildSettingsTile(
+            context,
             icon: Icons.fingerprint_rounded,
             title: 'Biometric Unlock',
             subtitle: 'Fingerprint / Face ID',
@@ -31,6 +33,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           _buildSettingsTile(
+            context,
             icon: Icons.timer_outlined,
             title: 'Auto Lock Timer',
             subtitle: 'Immediately',
@@ -39,9 +42,10 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 24),
           _buildSectionHeader('Appearance'),
           _buildSettingsTile(
+            context,
             icon: settings.isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-            title: 'Dark Mode',
-            subtitle: settings.isDarkMode ? 'Dark side is active' : 'Light side is active',
+            title: 'Mode Gelap',
+            subtitle: settings.isDarkMode ? 'Mode Gelap Aktif' : 'Mode Terang Aktif',
             trailing: Switch(
               value: settings.isDarkMode,
               onChanged: (val) => settings.toggleTheme(val),
@@ -51,15 +55,17 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(height: 24),
           _buildSectionHeader('Data'),
           _buildSettingsTile(
+            context,
             icon: Icons.backup_outlined,
             title: 'Backup Data Lokal',
-            subtitle: 'Coming soon',
-            onTap: () {},
+            subtitle: 'Ekspor atau Impor data akun',
+            onTap: () => _showBackupOptions(context),
           ),
           _buildSettingsTile(
+            context,
             icon: Icons.delete_forever_rounded,
             title: 'Hapus Semua Data',
-            subtitle: 'Danger zone',
+            subtitle: 'Zona Bahaya',
             iconColor: Colors.redAccent,
             onTap: () => _showDeleteAllDialog(context),
           ),
@@ -72,6 +78,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _buildAuthorFooter() {
+    final isDark = true; // Use fixed dark style for footer as it looks more premium, or adapt it
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -191,7 +198,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsTile({
+  Widget _buildSettingsTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -201,29 +209,142 @@ class SettingsScreen extends StatelessWidget {
   }) {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
+      color: Theme.of(context).cardTheme.color,
       child: ListTile(
         leading: Icon(icon, color: iconColor ?? const Color(0xFF6C63FF)),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle, style: TextStyle(color: Colors.grey[400], fontSize: 13)),
-        trailing: trailing ?? const Icon(Icons.chevron_right_rounded, color: Colors.grey),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.w600, color: Theme.of(context).textTheme.bodyLarge?.color)),
+        subtitle: Text(subtitle, style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(180), fontSize: 13)),
+        trailing: trailing ?? Icon(Icons.chevron_right_rounded, color: Theme.of(context).disabledColor),
         onTap: onTap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
 
+  void _showBackupOptions(BuildContext context) {
+    final accountProvider = context.read<AccountProvider>();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Theme.of(context).cardTheme.color,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Backup & Restore',
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.upload_rounded, color: Colors.blue),
+              ),
+              title: Text('Ekspor Data (Backup)', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+              subtitle: Text('Simpan akun sebagai file JSON', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(150))),
+              onTap: () async {
+                // Tutup BottomSheet dulu
+                Navigator.pop(context);
+                
+                final result = await accountProvider.exportBackup();
+                
+                // Cek hasil export
+                if (!context.mounted) return;
+                
+                if (result == 'success') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Backup Berhasil! Data sudah diekspor.')),
+                  );
+                } else if (result == 'empty') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Belum ada data untuk di-backup.')),
+                  );
+                } else if (result != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result)),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withAlpha(30),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.download_rounded, color: Colors.green),
+              ),
+              title: Text('Impor Data (Restore)', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+              subtitle: Text('Pulihkan akun dari file JSON', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(150))),
+              onTap: () async {
+                // Tutup BottomSheet dulu
+                Navigator.pop(context);
+                
+                final result = await accountProvider.importBackup();
+                
+                // Cek hasil import
+                if (!context.mounted) return;
+                
+                if (result.toLowerCase().contains('successfully')) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result)),
+                  );
+                } else if (result.contains('No new accounts')) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Impor Selesai. Tidak ada data baru.')),
+                  );
+                } else if (result != 'cancelled') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(result)),
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+
   void _showDeleteAllDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus Semua Data?'),
-        content: const Text('Tindakan ini tidak dapat dibatalkan. Semua akun tersimpan akan hilang.'),
+        backgroundColor: Theme.of(context).cardTheme.color,
+        title: Text('Hapus Semua Data?', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+        content: Text('Tindakan ini tidak dapat dibatalkan. Semua akun tersimpan akan hilang.', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180))),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Batal')),
           TextButton(
-            onPressed: () {
-              // Implementation in AccountProvider
-              Navigator.pop(context);
+            onPressed: () => Navigator.pop(context),
+            child: Text('Batal', style: TextStyle(color: Theme.of(context).disabledColor)),
+          ),
+          TextButton(
+            onPressed: () async {
+              final provider = context.read<AccountProvider>();
+              await provider.clearAllAccounts();
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Semua data berhasil dihapus!')),
+                );
+              }
             },
             child: const Text('Hapus Sekarang', style: TextStyle(color: Colors.redAccent)),
           ),

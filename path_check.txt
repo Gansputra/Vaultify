@@ -1,0 +1,41 @@
+﻿H:\MoodleWindowsInstaller-latest-500\server\php\php.exe
+H:\Python3.13.11
+H:\Python3.13.11\Scripts
+G:\Python\Python3.11
+G:\Python\Python3.11\Scripts
+C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler
+C:\WINDOWS\system32
+C:\WINDOWS
+C:\WINDOWS\System32\Wbem
+C:\WINDOWS\System32\WindowsPowerShell\v1.0\
+C:\WINDOWS\System32\OpenSSH\
+C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR
+C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common
+C:\Program Files\dotnet\
+C:\Program Files (x86)\ZeroTier\One\
+C:\php-8.3.12
+C:\composer
+C:\Program Files\Git\cmd
+G:\gradle-9.0.0\bin
+H:\flutter\bin
+C:\Users\Ganang\AppData\Local\nvm
+C:\nvm4w\nodejs
+C:\Program Files\nodejs\
+C:\xampp\mysql\bin
+C:\Users\Ganang\AppData\Local\Microsoft\WindowsApps
+C:\Users\Ganang\AppData\Local\Programs\Microsoft VS Code\bin
+H:\Future\Programming\PyCharm Community Edition 2024.3.5\bin
+
+C:\Users\Ganang\AppData\Roaming\Composer\vendor\bin
+C:\Program Files\JetBrains\IntelliJ IDEA 2025.1.2\bin
+
+H:\ffmpeg-2025\bin
+C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2025.1.2\bin
+
+G:\gradle-9.0.0\bin
+C:\Users\Ganang\AppData\Local\nvm
+C:\nvm4w\nodejs
+C:\Users\Ganang\AppData\Roaming\npm
+C:\xampp\mysql\bin
+G:\Antigravity\bin
+

@@ -24,6 +24,8 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,7 +34,7 @@ class CustomTextField extends StatelessWidget {
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w500,
-            color: Colors.grey[400],
+            color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(200),
           ),
         ),
         const SizedBox(height: 8),
@@ -40,26 +42,29 @@ class CustomTextField extends StatelessWidget {
           controller: controller,
           obscureText: obscureText,
           maxLines: maxLines,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
           validator: validator,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(100), 
+              fontSize: 14
+            ),
             prefixIcon: Icon(icon, color: const Color(0xFF6C63FF), size: 20),
             suffixIcon: suffixIcon,
             filled: true,
-            fillColor: const Color(0xFF1E1E1E),
+            fillColor: Theme.of(context).cardTheme.color,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(color: Colors.grey.withAlpha(isDark ? 0 : 30)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(color: Colors.grey.withAlpha(isDark ? 0 : 30)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 1),
+              borderSide: const BorderSide(color: Color(0xFF6C63FF), width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),

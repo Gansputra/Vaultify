@@ -91,8 +91,11 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
     final strengthColor = _getStrengthColor(strength);
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(loc.translate('gen_title')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 120),

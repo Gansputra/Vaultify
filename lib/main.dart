@@ -55,8 +55,9 @@ class VaultifyApp extends StatelessWidget {
                 iconTheme: const IconThemeData(color: Colors.black87),
               ),
               cardTheme: CardThemeData(
-                color: Colors.white,
+                color: Colors.white.withAlpha(200),
                 elevation: 2,
+                surfaceTintColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                   side: BorderSide(color: Colors.grey.withAlpha(20)),
@@ -76,7 +77,7 @@ class VaultifyApp extends StatelessWidget {
               scaffoldBackgroundColor: const Color(0xFF0A0A0A),
               textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
               appBarTheme: AppBarTheme(
-                backgroundColor: const Color(0xFF0A0A0A),
+                backgroundColor: Colors.transparent,
                 elevation: 0,
                 centerTitle: true,
                 titleTextStyle: GoogleFonts.outfit(
@@ -87,8 +88,9 @@ class VaultifyApp extends StatelessWidget {
                 iconTheme: const IconThemeData(color: Colors.white),
               ),
               cardTheme: CardThemeData(
-                color: const Color(0xFF1E1E1E),
+                color: const Color(0xFF1E1E1E).withAlpha(200),
                 elevation: 4,
+                surfaceTintColor: Colors.transparent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),

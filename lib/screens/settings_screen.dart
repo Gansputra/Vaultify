@@ -16,8 +16,11 @@ class SettingsScreen extends StatelessWidget {
     final loc = AppLocalization(settings.currentLanguage);
 
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(loc.translate('settings_title')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

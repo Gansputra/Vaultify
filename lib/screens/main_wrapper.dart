@@ -7,6 +7,7 @@ import 'statistics_screen.dart';
 import 'password_generator_screen.dart';
 import '../providers/settings_provider.dart';
 import '../services/localization_service.dart';
+import '../widgets/aura_background.dart';
 import 'dart:ui';
 
 class MainWrapper extends StatefulWidget {
@@ -41,8 +42,8 @@ class _MainWrapperState extends State<MainWrapper> {
     
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOutQuart,
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOutExpo,
     );
   }
 
@@ -60,11 +61,23 @@ class _MainWrapperState extends State<MainWrapper> {
     ];
     
     return Scaffold(
+      backgroundColor: Colors.transparent, // Set to transparent to see Aura
       body: Stack(
         children: [
+          // Dynamic Aura Background
+          AuraBackground(selectedIndex: _selectedIndex),
+          
+          // Mesh Blur Layer
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+
           PageView(
             controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(), // Disable swipe to keep it clean
+            physics: const NeverScrollableScrollPhysics(),
             children: screens,
           ),
           

@@ -40,8 +40,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final loc = AppLocalization(settings.currentLanguage);
     
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(loc.translate('app_name')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 80), // Move FAB up

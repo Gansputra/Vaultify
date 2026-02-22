@@ -14,8 +14,11 @@ class StatisticsScreen extends StatelessWidget {
     final loc = AppLocalization(settings.currentLanguage);
     
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(loc.translate('stats_title')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: Consumer<AccountProvider>(
         builder: (context, provider, child) {

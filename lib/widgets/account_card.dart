@@ -273,25 +273,45 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      widget.account.serviceName,
-                      style: TextStyle(
-                        fontSize: 22, 
-                        fontWeight: FontWeight.bold, 
-                        color: Theme.of(context).textTheme.bodyLarge?.color
-                      ),
-                    ),
+                    const SizedBox(height: 4),
                     InkWell(
                       onTap: () => _showCategoryPicker(context),
-                      child: Row(
-                        children: [
-                          Text(
-                            widget.account.category ?? 'Other', 
-                            style: TextStyle(color: Theme.of(context).disabledColor)
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.primary.withAlpha(30),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.primary.withAlpha(60),
+                            width: 1,
                           ),
-                          const SizedBox(width: 4),
-                          Icon(Icons.edit_rounded, size: 14, color: Theme.of(context).disabledColor),
-                        ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _getCategoryIcon(widget.account.category ?? 'Other'), 
+                              size: 14, 
+                              color: Theme.of(context).colorScheme.primary
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              widget.account.category ?? 'Other', 
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.edit_rounded, 
+                              size: 12, 
+                              color: Theme.of(context).colorScheme.primary.withAlpha(180)
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],

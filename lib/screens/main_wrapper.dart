@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'home_screen.dart';
 import 'settings_screen.dart';
 import 'statistics_screen.dart';
+import 'password_generator_screen.dart';
 import 'dart:ui';
 
 class MainWrapper extends StatefulWidget {
@@ -19,6 +20,7 @@ class _MainWrapperState extends State<MainWrapper> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
+    const PasswordGeneratorScreen(),
     const StatisticsScreen(),
     const SettingsScreen(),
   ];
@@ -64,8 +66,8 @@ class _MainWrapperState extends State<MainWrapper> {
           
           // Modern Floating Navbar
           Positioned(
-            left: 20,
-            right: 20,
+            left: 16,
+            right: 16,
             bottom: 24,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
@@ -73,6 +75,7 @@ class _MainWrapperState extends State<MainWrapper> {
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   height: 70,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: (isDark ? Colors.black : Colors.white).withAlpha(180),
                     borderRadius: BorderRadius.circular(24),
@@ -89,11 +92,12 @@ class _MainWrapperState extends State<MainWrapper> {
                     ],
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildNavItem(0, Icons.grid_view_rounded, 'Accounts'),
-                      _buildNavItem(1, Icons.pie_chart_rounded, 'Insights'),
-                      _buildNavItem(2, Icons.settings_rounded, 'Settings'),
+                      _buildNavItem(0, Icons.grid_view_rounded, 'Vault'),
+                      _buildNavItem(1, Icons.vpn_key_rounded, 'Keys'),
+                      _buildNavItem(2, Icons.analytics_rounded, 'Stats'),
+                      _buildNavItem(3, Icons.settings_rounded, 'Setup'),
                     ],
                   ),
                 ),
@@ -116,7 +120,7 @@ class _MainWrapperState extends State<MainWrapper> {
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeOutBack,
         padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 20 : 12, 
+          horizontal: isSelected ? 16 : 10, 
           vertical: 10
         ),
         decoration: BoxDecoration(
@@ -129,19 +133,19 @@ class _MainWrapperState extends State<MainWrapper> {
             Icon(
               icon,
               color: isSelected ? primaryColor : Colors.grey.withAlpha(150),
-              size: 24,
+              size: 22,
             ).animate(target: isSelected ? 1 : 0)
-             .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 300.ms, curve: Curves.easeOutBack)
+             .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 300.ms, curve: Curves.easeOutBack)
              .tint(color: isSelected ? primaryColor : Colors.grey, duration: 300.ms),
             
             if (isSelected) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: 6),
               Text(
                 label,
                 style: TextStyle(
                   color: primaryColor,
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: 12,
                 ),
               ).animate()
                .fadeIn(duration: 200.ms)

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
 import '../providers/settings_provider.dart';
@@ -34,6 +35,29 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  void _navigateToAddAccount() {
+    HapticFeedback.lightImpact();
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const AddAccountScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeOut;
+
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+          return SlideTransition(
+            position: animation.drive(tween),
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 350),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
@@ -47,17 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 80), // Move FAB up
+        padding: const EdgeInsets.only(bottom: 80),
         child: FloatingActionButton.extended(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AddAccountScreen()),
-            );
-          },
+          onPressed: _navigateToAddAccount,
           label: Text(loc.translate('add_account')),
           icon: const Icon(Icons.add_rounded),
-        ).animate().scale(delay: 500.ms),
+        ).animate().scale(delay: 500.ms, curve: Curves.easeOutBack),
       ),
       body: Column(
         children: [

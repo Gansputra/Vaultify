@@ -4,6 +4,8 @@ import '../providers/account_provider.dart';
 import '../providers/settings_provider.dart';
 import '../services/localization_service.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/aura_background.dart';
+import 'dart:ui';
 
 class AddAccountScreen extends StatefulWidget {
   const AddAccountScreen({super.key});
@@ -126,16 +128,31 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     final loc = AppLocalization(settings.currentLanguage);
     
     return Scaffold(
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(loc.translate('add_new_account')),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Stack(
+        children: [
+          // Keeping the aura background consistent
+          const AuraBackground(selectedIndex: 0),
+          
+          Positioned.fill(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
+              child: Container(color: Colors.transparent),
+            ),
+          ),
+
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               Text(
                 loc.translate('details'),
                 style: TextStyle(
@@ -245,9 +262,11 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   ),
                 ),
               ),
-            ],
+                ],
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

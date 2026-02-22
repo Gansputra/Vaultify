@@ -14,6 +14,7 @@ class MainWrapper extends StatefulWidget {
 
 class _MainWrapperState extends State<MainWrapper> {
   int _selectedIndex = 0;
+  late PageController _pageController;
 
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -22,14 +23,41 @@ class _MainWrapperState extends State<MainWrapper> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _selectedIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex == index) return;
+    
+    setState(() {
+      _selectedIndex = index;
+    });
+    
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOutQuart,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return Scaffold(
       body: Stack(
         children: [
-          IndexedStack(
-            index: _selectedIndex,
+          PageView(
+            controller: _pageController,
+            physics: const NeverScrollableScrollPhysics(), // Disable swipe to keep it clean
             children: _screens,
           ),
           
@@ -81,7 +109,7 @@ class _MainWrapperState extends State<MainWrapper> {
     final primaryColor = Theme.of(context).colorScheme.primary;
 
     return GestureDetector(
-      onTap: () => setState(() => _selectedIndex = index),
+      onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),

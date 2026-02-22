@@ -53,6 +53,28 @@ class AccountProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateAccountCategory(Account account, String newCategory) async {
+    account = _accounts.firstWhere((a) => a.id == account.id);
+    // Since Account extends HiveObject, we can update and save
+    final box = HiveDatabase.getAccountBox();
+    final index = box.values.toList().indexWhere((a) => a.id == account.id);
+    
+    if (index != -1) {
+      final updatedAccount = Account(
+        id: account.id,
+        serviceName: account.serviceName,
+        username: account.username,
+        password: account.password,
+        notes: account.notes,
+        createdAt: account.createdAt,
+        category: newCategory,
+      );
+      await box.putAt(index, updatedAccount);
+      _accounts[_accounts.indexWhere((a) => a.id == account.id)] = updatedAccount;
+      notifyListeners();
+    }
+  }
+
   void setSearchQuery(String query) {
     _searchQuery = query;
     notifyListeners();

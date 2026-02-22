@@ -183,16 +183,53 @@ class _AccountDetailsSheet extends StatefulWidget {
 class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
   bool _obscurePassword = true;
 
+  final Map<String, IconData> _categories = {
+    'Social Media': Icons.people_rounded,
+    'Entertainment': Icons.movie_rounded,
+    'Work/Email': Icons.work_rounded,
+    'Finance': Icons.account_balance_rounded,
+    'Games': Icons.sports_esports_rounded,
+    'Shopping': Icons.shopping_cart_rounded,
+    'Other': Icons.category_rounded,
+  };
+
   IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'Social Media': return Icons.people_rounded;
-      case 'Entertainment': return Icons.movie_rounded;
-      case 'Work/Email': return Icons.work_rounded;
-      case 'Finance': return Icons.account_balance_rounded;
-      case 'Games': return Icons.sports_esports_rounded;
-      case 'Shopping': return Icons.shopping_cart_rounded;
-      default: return Icons.category_rounded;
-    }
+    return _categories[category] ?? Icons.category_rounded;
+  }
+
+  void _showCategoryPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardTheme.color,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Pilih Kategori Baru', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 16),
+            Flexible(
+              child: ListView(
+                shrinkWrap: true,
+                children: _categories.keys.map((cat) => ListTile(
+                  leading: Icon(_categories[cat], color: const Color(0xFF6C63FF)),
+                  title: Text(cat),
+                  onTap: () {
+                    context.read<AccountProvider>().updateAccountCategory(widget.account, cat);
+                    Navigator.pop(context); // Close picker
+                    Navigator.pop(context); // Close details sheet to refresh
+                  },
+                )).toList(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -232,19 +269,33 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                 child: Icon(_getCategoryIcon(widget.account.category ?? 'Other'), color: Theme.of(context).colorScheme.primary, size: 30),
               ),
               const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.account.serviceName,
-                    style: TextStyle(
-                      fontSize: 22, 
-                      fontWeight: FontWeight.bold, 
-                      color: Theme.of(context).textTheme.bodyLarge?.color
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.account.serviceName,
+                      style: TextStyle(
+                        fontSize: 22, 
+                        fontWeight: FontWeight.bold, 
+                        color: Theme.of(context).textTheme.bodyLarge?.color
+                      ),
                     ),
-                  ),
-                  Text(widget.account.category ?? 'Other', style: TextStyle(color: Theme.of(context).disabledColor)),
-                ],
+                    InkWell(
+                      onTap: () => _showCategoryPicker(context),
+                      child: Row(
+                        children: [
+                          Text(
+                            widget.account.category ?? 'Other', 
+                            style: TextStyle(color: Theme.of(context).disabledColor)
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(Icons.edit_rounded, size: 14, color: Theme.of(context).disabledColor),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

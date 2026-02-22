@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'home_screen.dart';
 import 'settings_screen.dart';
 import 'statistics_screen.dart';
@@ -112,20 +113,27 @@ class _MainWrapperState extends State<MainWrapper> {
       onTap: () => _onItemTapped(index),
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOutBack,
+        padding: EdgeInsets.symmetric(
+          horizontal: isSelected ? 20 : 12, 
+          vertical: 10
+        ),
         decoration: BoxDecoration(
-          color: isSelected ? primaryColor.withAlpha(30) : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? primaryColor.withAlpha(40) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: isSelected ? primaryColor : Colors.grey,
+              color: isSelected ? primaryColor : Colors.grey.withAlpha(150),
               size: 24,
-            ),
+            ).animate(target: isSelected ? 1 : 0)
+             .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 300.ms, curve: Curves.easeOutBack)
+             .tint(color: isSelected ? primaryColor : Colors.grey, duration: 300.ms),
+            
             if (isSelected) ...[
               const SizedBox(width: 8),
               Text(
@@ -135,11 +143,18 @@ class _MainWrapperState extends State<MainWrapper> {
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
-              ),
+              ).animate()
+               .fadeIn(duration: 200.ms)
+               .slideX(begin: 0.5, end: 0, curve: Curves.easeOutCubic),
             ],
           ],
         ),
       ),
-    );
+    ).animate(target: isSelected ? 1 : 0)
+     .shimmer(
+       delay: 400.ms, 
+       duration: 1.5.seconds, 
+       color: primaryColor.withAlpha(20),
+     );
   }
 }

@@ -11,20 +11,65 @@ class AddAccountScreen extends StatefulWidget {
 }
 
 class _AddAccountScreenState extends State<AddAccountScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _serviceController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _notesController = TextEditingController();
-  bool _obscurePassword = true;
+  String _selectedCategory = 'Other';
+  final Map<String, IconData> _categories = {
+    'Social Media': Icons.people_rounded,
+    'Entertainment': Icons.movie_rounded,
+    'Work/Email': Icons.work_rounded,
+    'Finance': Icons.account_balance_rounded,
+    'Games': Icons.sports_esports_rounded,
+    'Shopping': Icons.shopping_cart_rounded,
+    'Other': Icons.category_rounded,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    _serviceController.addListener(_autoDetectCategory);
+  }
 
   @override
   void dispose() {
+    _serviceController.removeListener(_autoDetectCategory);
     _serviceController.dispose();
     _usernameController.dispose();
     _passwordController.dispose();
     _notesController.dispose();
     super.dispose();
+  }
+
+  void _autoDetectCategory() {
+    final name = _serviceController.text.toLowerCase();
+    String detected = 'Other';
+
+    if (name.contains('facebook') || name.contains('instagram') || name.contains('twitter') || 
+        name.contains('tiktok') || name.contains('whatsapp') || name.contains('linkedin') || 
+        name.contains('tele') || name.contains('snapchat')) {
+      detected = 'Social Media';
+    } else if (name.contains('netflix') || name.contains('spotify') || name.contains('disney') || 
+               name.contains('hulu') || name.contains('youtube') || name.contains('prime')) {
+      detected = 'Entertainment';
+    } else if (name.contains('google') || name.contains('gmail') || name.contains('outlook') || 
+               name.contains('work') || name.contains('slack') || name.contains('zoom') || 
+               name.contains('mail') || name.contains('github')) {
+      detected = 'Work/Email';
+    } else if (name.contains('bca') || name.contains('mandiri') || name.contains('bri') || 
+               name.contains('paypal') || name.contains('binance') || name.contains('bank') || 
+               name.contains('crypto') || name.contains('wallet')) {
+      detected = 'Finance';
+    } else if (name.contains('steam') || name.contains('epic') || name.contains('roblox') || 
+               name.contains('pubg') || name.contains('game')) {
+      detected = 'Games';
+    } else if (name.contains('tokopedia') || name.contains('shopee') || name.contains('amazon') || 
+               name.contains('lazada') || name.contains('shop')) {
+      detected = 'Shopping';
+    }
+
+    if (detected != 'Other' && _selectedCategory != detected) {
+      setState(() {
+        _selectedCategory = detected;
+      });
+    }
   }
 
   void _saveAccount() {
@@ -34,6 +79,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             username: _usernameController.text,
             password: _passwordController.text,
             notes: _notesController.text.isEmpty ? null : _notesController.text,
+            category: _selectedCategory,
           );
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -78,6 +124,44 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 icon: Icons.account_balance_wallet_rounded,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'Isi Nama Layanan Dulu Bro' : null,
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                decoration: InputDecoration(
+                  labelText: 'Kategori',
+                  prefixIcon: Icon(_categories[_selectedCategory], color: const Color(0xFF6C63FF)),
+                  filled: true,
+                  fillColor: Theme.of(context).cardTheme.color,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: Colors.grey.withAlpha(20)),
+                  ),
+                ),
+                dropdownColor: Theme.of(context).cardTheme.color,
+                items: _categories.keys.map((String category) {
+                  return DropdownMenuItem<String>(
+                    value: category,
+                    child: Row(
+                      children: [
+                        Icon(_categories[category], size: 20),
+                        const SizedBox(width: 12),
+                        Text(category),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _selectedCategory = newValue;
+                    });
+                  }
+                },
               ),
               const SizedBox(height: 16),
               CustomTextField(

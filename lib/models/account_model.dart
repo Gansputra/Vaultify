@@ -22,6 +22,9 @@ class Account extends HiveObject {
   @HiveField(5)
   final DateTime createdAt;
 
+  @HiveField(6)
+  final String category;
+
   Account({
     required this.id,
     required this.serviceName,
@@ -29,6 +32,7 @@ class Account extends HiveObject {
     required this.password,
     this.notes,
     required this.createdAt,
+    this.category = 'Other',
   });
 
   Map<String, dynamic> toJson() => {
@@ -38,6 +42,7 @@ class Account extends HiveObject {
     'password': password,
     'notes': notes,
     'createdAt': createdAt.toIso8601String(),
+    'category': category,
   };
 
   factory Account.fromJson(Map<String, dynamic> json) => Account(
@@ -47,5 +52,6 @@ class Account extends HiveObject {
     password: json['password'],
     notes: json['notes'],
     createdAt: DateTime.parse(json['createdAt']),
+    category: json['category'] ?? 'Other',
   );
 }

@@ -35,6 +35,7 @@ class AccountProvider with ChangeNotifier {
     required String username,
     required String password,
     String? notes,
+    required String category,
   }) async {
     final newAccount = Account(
       id: const Uuid().v4(),
@@ -43,6 +44,7 @@ class AccountProvider with ChangeNotifier {
       password: password,
       notes: notes,
       createdAt: DateTime.now(),
+      category: category,
     );
 
     final box = HiveDatabase.getAccountBox();

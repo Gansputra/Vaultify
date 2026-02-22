@@ -32,8 +32,44 @@ class AccountCard extends StatelessWidget {
     );
   }
 
+  IconData _getCategoryIcon(String category) {
+    // Priority logic for common services
+    final name = account.serviceName.toLowerCase();
+    if (name.contains('google') || name.contains('gmail')) return Icons.mail_rounded;
+    if (name.contains('facebook')) return Icons.facebook;
+    if (name.contains('apple')) return Icons.apple;
+    if (name.contains('instagram')) return Icons.camera_alt_rounded;
+    if (name.contains('twitter') || name.contains(' x ')) return Icons.close_rounded;
+    if (name.contains('github')) return Icons.code_rounded;
+
+    return switch (category) {
+      'Social Media' => Icons.people_rounded,
+      'Entertainment' => Icons.movie_rounded,
+      'Work/Email' => Icons.work_rounded,
+      'Finance' => Icons.account_balance_rounded,
+      'Games' => Icons.sports_esports_rounded,
+      'Shopping' => Icons.shopping_cart_rounded,
+      _ => Icons.category_rounded,
+    };
+  }
+
+  Color _getBrandColor(String category) {
+    return switch (category) {
+      'Social Media' => const Color(0xFF1877F2),
+      'Entertainment' => const Color(0xFFE50914),
+      'Work/Email' => const Color(0xFF34A853),
+      'Finance' => const Color(0xFFFBBC05),
+      'Games' => const Color(0xFF6C63FF),
+      'Shopping' => const Color(0xFFFF9900),
+      _ => const Color(0xFF6C63FF),
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
+    final categoryIcon = _getCategoryIcon(account.category);
+    final brandColor = _getBrandColor(account.category);
+
     return Card(
       child: InkWell(
         onTap: () => _showAccountDetails(context),
@@ -46,17 +82,14 @@ class AccountCard extends StatelessWidget {
                 width: 50,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withAlpha(25),
+                  color: brandColor.withAlpha(25),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child: Text(
-                    account.serviceName[0].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  child: Icon(
+                    categoryIcon,
+                    color: brandColor,
+                    size: 26,
                   ),
                 ),
               ),
@@ -65,13 +98,33 @@ class AccountCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      account.serviceName,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          account.serviceName,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: brandColor.withAlpha(40),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            account.category,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: brandColor,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -130,6 +183,18 @@ class _AccountDetailsSheet extends StatefulWidget {
 class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
   bool _obscurePassword = true;
 
+  IconData _getCategoryIcon(String category) {
+    switch (category) {
+      case 'Social Media': return Icons.people_rounded;
+      case 'Entertainment': return Icons.movie_rounded;
+      case 'Work/Email': return Icons.work_rounded;
+      case 'Finance': return Icons.account_balance_rounded;
+      case 'Games': return Icons.sports_esports_rounded;
+      case 'Shopping': return Icons.shopping_cart_rounded;
+      default: return Icons.category_rounded;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -164,7 +229,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                   color: Theme.of(context).colorScheme.primary.withAlpha(25),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(Icons.security, color: Theme.of(context).colorScheme.primary, size: 30),
+                child: Icon(_getCategoryIcon(widget.account.category), color: Theme.of(context).colorScheme.primary, size: 30),
               ),
               const SizedBox(width: 16),
               Column(
@@ -178,7 +243,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                       color: Theme.of(context).textTheme.bodyLarge?.color
                     ),
                   ),
-                  Text('Account Details', style: TextStyle(color: Theme.of(context).disabledColor)),
+                  Text(widget.account.category, style: TextStyle(color: Theme.of(context).disabledColor)),
                 ],
               ),
             ],

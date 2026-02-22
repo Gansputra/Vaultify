@@ -23,7 +23,7 @@ class Account extends HiveObject {
   final DateTime createdAt;
 
   @HiveField(6)
-  final String category;
+  final String? category;
 
   Account({
     required this.id,

@@ -11,6 +11,13 @@ class AddAccountScreen extends StatefulWidget {
 }
 
 class _AddAccountScreenState extends State<AddAccountScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _serviceController = TextEditingController();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _notesController = TextEditingController();
+  bool _obscurePassword = true;
+
   String _selectedCategory = 'Other';
   final Map<String, IconData> _categories = {
     'Social Media': Icons.people_rounded,

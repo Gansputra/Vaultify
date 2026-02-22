@@ -23,38 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.microtask(() {
       if (mounted) {
         context.read<AccountProvider>().loadAccounts();
-        _showSecurityJoke();
       }
     });
-  }
-
-  void _showSecurityJoke() {
-    final jokes = [
-      'Gak usah nyoba SS bro, percuma bakal item pekat! 😎',
-      'Tenang bro, rahasia lu aman di brankas anti-screenshot ini. 🛡️',
-      'Eits! Vaultify lagi dalam mode "Sangat Rahasia". SS diblokir! 🔐',
-      'Lagi nyari celah ya? Safe and secure bro, santai aja. 🔥',
-      'Security tip: Jangan pamer password ke mantan ya! 😜',
-    ];
-    
-    final randomJoke = jokes[Random().nextInt(jokes.length)];
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.security_rounded, color: Colors.white, size: 20),
-            const SizedBox(width: 12),
-            Expanded(child: Text(randomJoke, style: const TextStyle(fontWeight: FontWeight.bold))),
-          ],
-        ),
-        backgroundColor: const Color(0xFF6C63FF),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 3),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    );
   }
 
   @override

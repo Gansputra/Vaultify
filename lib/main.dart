@@ -5,14 +5,10 @@ import 'database/hive_database.dart';
 import 'providers/account_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/splash_screen.dart';
-import 'package:screen_protector/screen_protector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await HiveDatabase.init();
-  
-  // Aktifkan proteksi screenshot Android (FLAG_SECURE) secara permanen
-  await ScreenProtector.preventScreenshotOn();
   
   runApp(const VaultifyApp());
 }

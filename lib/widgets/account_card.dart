@@ -67,8 +67,8 @@ class AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final categoryIcon = _getCategoryIcon(account.category);
-    final brandColor = _getBrandColor(account.category);
+    final categoryIcon = _getCategoryIcon(account.category ?? 'Other');
+    final brandColor = _getBrandColor(account.category ?? 'Other');
 
     return Card(
       child: InkWell(
@@ -116,7 +116,7 @@ class AccountCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            account.category,
+                            account.category ?? 'Other',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -229,7 +229,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                   color: Theme.of(context).colorScheme.primary.withAlpha(25),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(_getCategoryIcon(widget.account.category), color: Theme.of(context).colorScheme.primary, size: 30),
+                child: Icon(_getCategoryIcon(widget.account.category ?? 'Other'), color: Theme.of(context).colorScheme.primary, size: 30),
               ),
               const SizedBox(width: 16),
               Column(
@@ -243,7 +243,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                       color: Theme.of(context).textTheme.bodyLarge?.color
                     ),
                   ),
-                  Text(widget.account.category, style: TextStyle(color: Theme.of(context).disabledColor)),
+                  Text(widget.account.category ?? 'Other', style: TextStyle(color: Theme.of(context).disabledColor)),
                 ],
               ),
             ],

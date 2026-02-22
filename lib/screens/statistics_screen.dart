@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../providers/settings_provider.dart';
+import '../services/localization_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class StatisticsScreen extends StatelessWidget {
@@ -8,17 +10,20 @@ class StatisticsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Insight Brankas'),
+        title: Text(loc.translate('stats_title')),
       ),
       body: Consumer<AccountProvider>(
         builder: (context, provider, child) {
           final accounts = provider.accounts;
           
           if (accounts.isEmpty) {
-            return const Center(
-              child: Text('Belum ada data untuk dianalisis King!'),
+            return Center(
+              child: Text(loc.translate('stats_no_data')),
             );
           }
 
@@ -37,10 +42,10 @@ class StatisticsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSummaryCard(context, accounts.length),
+                _buildSummaryCard(context, accounts.length, loc),
                 const SizedBox(height: 32),
                 Text(
-                  'Distribusi Kategori',
+                  loc.translate('stats_distribution'),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -60,7 +65,7 @@ class StatisticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(BuildContext context, int total) {
+  Widget _buildSummaryCard(BuildContext context, int total, AppLocalization loc) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -85,13 +90,13 @@ class StatisticsScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Total Akun Tersimpan',
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+          Text(
+            loc.translate('stats_total'),
+            style: const TextStyle(color: Colors.white70, fontSize: 16),
           ),
           const SizedBox(height: 8),
           Text(
-            '$total Akun',
+            '$total Account${total > 1 ? 's' : ''}', // Simple pluralization
             style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
@@ -111,7 +116,7 @@ class StatisticsScreen extends StatelessWidget {
                 Icon(Icons.shield_rounded, color: Colors.white, size: 16),
                 SizedBox(width: 8),
                 Text(
-                  'Keamanan Terenkripsi',
+                  'Encrypted Security',
                   style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ],

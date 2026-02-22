@@ -4,6 +4,7 @@ import '../models/account_model.dart';
 import '../providers/account_provider.dart';
 import '../services/security_service.dart';
 import '../providers/settings_provider.dart';
+import '../services/localization_service.dart';
 import 'package:flutter/services.dart';
 
 class AccountCard extends StatelessWidget {
@@ -67,6 +68,8 @@ class AccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
     final categoryIcon = _getCategoryIcon(account.category ?? 'Other');
     final brandColor = _getBrandColor(account.category ?? 'Other');
 
@@ -116,7 +119,7 @@ class AccountCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            account.category ?? 'Other',
+                            loc.getLocalizedCategory(account.category ?? 'Other'),
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -139,7 +142,7 @@ class AccountCard extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.delete_outline_rounded, color: Colors.redAccent),
-                onPressed: () => _showDeleteConfirmDialog(context),
+                onPressed: () => _showDeleteConfirmDialog(context, loc),
               ),
             ],
           ),
@@ -148,23 +151,24 @@ class AccountCard extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirmDialog(BuildContext context) {
+  void _showDeleteConfirmDialog(BuildContext context, AppLocalization loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus Akun?'),
-        content: Text('Apakah kamu yakin ingin menghapus ${account.serviceName}?'),
+        backgroundColor: Theme.of(context).cardTheme.color,
+        title: Text(loc.translate('delete_title')),
+        content: Text('${loc.translate('delete_confirm')} ${account.serviceName}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Tidak Jadi'),
+            child: Text(loc.translate('no_way')),
           ),
           TextButton(
             onPressed: () {
               context.read<AccountProvider>().deleteAccount(account);
               Navigator.pop(context);
             },
-            child: const Text('Hapus', style: TextStyle(color: Colors.redAccent)),
+            child: Text(loc.translate('delete'), style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -197,7 +201,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
     return _categories[category] ?? Icons.category_rounded;
   }
 
-  void _showCategoryPicker(BuildContext context) {
+  void _showCategoryPicker(BuildContext context, AppLocalization loc) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -210,14 +214,14 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Pilih Kategori Baru', style: Theme.of(context).textTheme.titleLarge),
+            Text(loc.translate('change_category'), style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 16),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
                 children: _categories.keys.map((cat) => ListTile(
                   leading: Icon(_categories[cat], color: const Color(0xFF6C63FF)),
-                  title: Text(cat),
+                  title: Text(loc.getLocalizedCategory(cat)),
                   onTap: () {
                     context.read<AccountProvider>().updateAccountCategory(widget.account, cat);
                     Navigator.pop(context); // Close picker
@@ -234,7 +238,8 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
     
     return Container(
       decoration: BoxDecoration(
@@ -275,7 +280,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                   children: [
                     const SizedBox(height: 4),
                     InkWell(
-                      onTap: () => _showCategoryPicker(context),
+                      onTap: () => _showCategoryPicker(context, loc),
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -297,7 +302,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              widget.account.category ?? 'Other', 
+                              loc.getLocalizedCategory(widget.account.category ?? 'Other'), 
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -320,19 +325,20 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
             ],
           ),
           const SizedBox(height: 32),
-          _buildDetailItem(context, 'Username / Email', widget.account.username),
+          _buildDetailItem(context, loc.translate('username_email'), widget.account.username, loc),
           const SizedBox(height: 16),
           _buildDetailItem(
             context,
-            'Password',
+            loc.translate('password'),
             widget.account.password,
+            loc,
             isPassword: true,
             obscure: _obscurePassword,
             onToggle: () => setState(() => _obscurePassword = !_obscurePassword),
           ),
           if (widget.account.notes != null) ...[
             const SizedBox(height: 16),
-            _buildDetailItem(context, 'Notes', widget.account.notes!),
+            _buildDetailItem(context, loc.translate('notes'), widget.account.notes!, loc),
           ],
           const SizedBox(height: 32),
           SizedBox(
@@ -344,7 +350,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
                 backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(200),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: const Text('Close', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(loc.translate('close'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
           const SizedBox(height: 16),
@@ -356,7 +362,8 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
   Widget _buildDetailItem(
     BuildContext context,
     String label,
-    String value, {
+    String value,
+    AppLocalization loc, {
     bool isPassword = false,
     bool obscure = false,
     VoidCallback? onToggle,
@@ -373,7 +380,7 @@ class _AccountDetailsSheetState extends State<_AccountDetailsSheet> {
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: value));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Copied to clipboard'), duration: Duration(seconds: 1)),
+                  SnackBar(content: Text(loc.translate('copied')), duration: const Duration(seconds: 1)),
                 );
               },
               constraints: const BoxConstraints(),

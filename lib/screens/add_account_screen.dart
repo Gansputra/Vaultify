@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../providers/settings_provider.dart';
+import '../services/localization_service.dart';
 import '../widgets/custom_text_field.dart';
 
 class AddAccountScreen extends StatefulWidget {
@@ -79,7 +81,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     }
   }
 
-  void _saveAccount() {
+  void _saveAccount(AppLocalization loc) {
     if (_formKey.currentState!.validate()) {
       context.read<AccountProvider>().addAccount(
             serviceName: _serviceController.text,
@@ -91,7 +93,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Akun Berhasil Di Save!'),
+          content: Text(loc.translate('save_success')),
           backgroundColor: Theme.of(context).colorScheme.primary,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -102,11 +104,30 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     }
   }
 
+  String _getLocalizedCategory(String cat, String langCode) {
+    if (langCode == 'id') {
+      switch (cat) {
+        case 'Social Media': return 'Media Sosial';
+        case 'Entertainment': return 'Hiburan';
+        case 'Work/Email': return 'Kerja / Email';
+        case 'Finance': return 'Keuangan';
+        case 'Games': return 'Game';
+        case 'Shopping': return 'Belanja';
+        case 'Other': return 'Lainnya';
+        default: return cat;
+      }
+    }
+    return cat;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tambah Akun Baru'),
+        title: Text(loc.translate('add_new_account')),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -116,7 +137,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Detail Akun',
+                loc.translate('details'),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -126,17 +147,17 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
               const SizedBox(height: 20),
               CustomTextField(
                 controller: _serviceController,
-                label: 'Nama Layanan',
-                hint: 'e.g. Google, Netflix, Spotify',
+                label: loc.translate('service_name'),
+                hint: loc.translate('service_hint'),
                 icon: Icons.account_balance_wallet_rounded,
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Isi Nama Layanan Dulu Bro' : null,
+                    value == null || value.isEmpty ? loc.translate('fill_service') : null,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: InputDecoration(
-                  labelText: 'Kategori',
+                  labelText: loc.translate('category'),
                   prefixIcon: Icon(_categories[_selectedCategory], color: const Color(0xFF6C63FF)),
                   filled: true,
                   fillColor: Theme.of(context).cardTheme.color,
@@ -157,7 +178,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                       children: [
                         Icon(_categories[category], size: 20),
                         const SizedBox(width: 12),
-                        Text(category),
+                        Text(_getLocalizedCategory(category, settings.currentLanguage)),
                       ],
                     ),
                   );
@@ -173,17 +194,17 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _usernameController,
-                label: 'Username / Email',
+                label: loc.translate('username_email'),
                 hint: 'e.g. john.doe@mail.com',
                 icon: Icons.alternate_email_rounded,
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Isi Username Dulu Bro' : null,
+                    value == null || value.isEmpty ? loc.translate('fill_username') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _passwordController,
-                label: 'Password',
-                hint: 'Your password',
+                label: loc.translate('password'),
+                hint: settings.currentLanguage == 'id' ? 'Password kamu' : 'Your password',
                 icon: Icons.lock_outline_rounded,
                 obscureText: _obscurePassword,
                 suffixIcon: IconButton(
@@ -194,13 +215,13 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Isi Password Dulu Bro' : null,
+                    value == null || value.isEmpty ? loc.translate('fill_password') : null,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _notesController,
-                label: 'Catatan (Optional)',
-                hint: 'Informasi Tambahan',
+                label: '${loc.translate('notes')} (${settings.currentLanguage == 'id' ? 'Opsional' : 'Optional'})',
+                hint: settings.currentLanguage == 'id' ? 'Informasi Tambahan' : 'Additional Information',
                 icon: Icons.notes_rounded,
                 maxLines: 3,
               ),
@@ -209,7 +230,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: _saveAccount,
+                  onPressed: () => _saveAccount(loc),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,
@@ -218,9 +239,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'Save Account',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  child: Text(
+                    loc.translate('save_account'),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

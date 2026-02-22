@@ -1,6 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import '../providers/settings_provider.dart';
+import '../services/localization_service.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class PasswordGeneratorScreen extends StatefulWidget {
@@ -37,7 +40,8 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
     if (_includeSymbols) allowedChars += symbols;
 
     if (allowedChars.isEmpty) {
-      setState(() => _generatedPassword = 'Pilih salah satu dulu King!');
+      final loc = AppLocalization(context.read<SettingsProvider>().currentLanguage);
+      setState(() => _generatedPassword = loc.languageCode == 'id' ? 'Pilih salah satu dulu King!' : 'Select at least one option!');
       return;
     }
 
@@ -53,7 +57,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
   }
 
   double _calculateStrength() {
-    if (_generatedPassword.isEmpty || _generatedPassword.startsWith('Pilih')) return 0.0;
+    if (_generatedPassword.isEmpty || _generatedPassword.contains('!')) return 0.0;
     
     double score = 0;
     if (_passwordLength > 8) score += 0.2;
@@ -72,21 +76,23 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
     return Colors.greenAccent;
   }
 
-  String _getStrengthText(double strength) {
-    if (strength <= 0.4) return 'Lemah (Gampang Dibobol)';
-    if (strength <= 0.6) return 'Lumayan (Bisa Lebih Kuat)';
-    if (strength <= 0.8) return 'Kuat (Aman Jaya)';
-    return 'Dewa (Gak Ada Obat!)';
+  String _getStrengthText(double strength, AppLocalization loc) {
+    if (strength <= 0.4) return loc.translate('gen_strength_weak');
+    if (strength <= 0.6) return loc.translate('gen_strength_fair');
+    if (strength <= 0.8) return loc.translate('gen_strength_strong');
+    return loc.translate('gen_strength_god');
   }
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
     final strength = _calculateStrength();
     final strengthColor = _getStrengthColor(strength);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Password Generator'),
+        title: Text(loc.translate('gen_title')),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 120),
@@ -126,7 +132,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              _getStrengthText(strength),
+                              _getStrengthText(strength, loc),
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
@@ -170,7 +176,7 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                           Clipboard.setData(ClipboardData(text: _generatedPassword));
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text('Password Berhasil Dikopi!'),
+                              content: Text(loc.translate('gen_copy_success')),
                               behavior: SnackBarBehavior.floating,
                               backgroundColor: Theme.of(context).colorScheme.primary,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -203,9 +209,9 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Panjang Karakter',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      Text(
+                        loc.translate('gen_length'),
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       Text(
                         _passwordLength.toInt().toString(),
@@ -229,10 +235,10 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
                     },
                   ),
                   const SizedBox(height: 16),
-                  _buildOption('Huruf Besar (ABC)', _includeUppercase, (v) => setState(() { _includeUppercase = v; _generatePassword(); })),
-                  _buildOption('Huruf Kecil (abc)', _includeLowercase, (v) => setState(() { _includeLowercase = v; _generatePassword(); })),
-                  _buildOption('Angka (123)', _includeNumbers, (v) => setState(() { _includeNumbers = v; _generatePassword(); })),
-                  _buildOption('Simbol (!@#)', _includeSymbols, (v) => setState(() { _includeSymbols = v; _generatePassword(); })),
+                  _buildOption(loc.translate('gen_uppercase'), _includeUppercase, (v) => setState(() { _includeUppercase = v; _generatePassword(); })),
+                  _buildOption(loc.translate('gen_lowercase'), _includeLowercase, (v) => setState(() { _includeLowercase = v; _generatePassword(); })),
+                  _buildOption(loc.translate('gen_numbers'), _includeNumbers, (v) => setState(() { _includeNumbers = v; _generatePassword(); })),
+                  _buildOption(loc.translate('gen_symbols'), _includeSymbols, (v) => setState(() { _includeSymbols = v; _generatePassword(); })),
                 ],
               ),
             ),
@@ -245,9 +251,9 @@ class _PasswordGeneratorScreenState extends State<PasswordGeneratorScreen> {
               child: ElevatedButton.icon(
                 onPressed: _generatePassword,
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text(
-                  'Refresh Password',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                label: Text(
+                  loc.translate('gen_refresh'),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).colorScheme.primary,

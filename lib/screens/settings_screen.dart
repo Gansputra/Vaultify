@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/account_provider.dart';
+import '../services/localization_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -12,20 +13,21 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(loc.translate('settings_title')),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         children: [
-          _buildSectionHeader('Security'),
+          _buildSectionHeader(loc.translate('settings_security')),
           _buildSettingsTile(
             context,
             icon: Icons.fingerprint_rounded,
-            title: 'Kunci Biometrik',
-            subtitle: 'Sidik Jari / Biometrik',
+            title: loc.translate('settings_biometric'),
+            subtitle: loc.languageCode == 'id' ? 'Sidik Jari / Biometrik' : 'Fingerprint / Face ID',
             trailing: Switch(
               value: settings.biometricEnabled,
               onChanged: (val) => settings.toggleBiometric(val),
@@ -33,45 +35,135 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          _buildSectionHeader('Appearance'),
+          _buildSectionHeader(loc.translate('settings_appearance')),
           _buildSettingsTile(
             context,
             icon: settings.isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-            title: 'Mode Gelap',
-            subtitle: settings.isDarkMode ? 'Mode Gelap Aktif' : 'Mode Terang Aktif',
+            title: loc.translate('settings_dark_mode'),
+            subtitle: settings.isDarkMode 
+                ? (loc.languageCode == 'id' ? 'Mode Gelap Aktif' : 'Dark Mode Enabled')
+                : (loc.languageCode == 'id' ? 'Mode Terang Aktif' : 'Light Mode Enabled'),
             trailing: Switch(
               value: settings.isDarkMode,
               onChanged: (val) => settings.toggleTheme(val),
               activeColor: Theme.of(context).colorScheme.primary,
             ),
           ),
+          _buildSettingsTile(
+            context,
+            icon: Icons.language_rounded,
+            title: loc.translate('settings_language'),
+            subtitle: settings.currentLanguage == 'id' ? 'Bahasa Indonesia' : 'English',
+            onTap: () => _showLanguagePicker(context, settings, loc),
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.primary.withAlpha(20),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                settings.currentLanguage == 'id' ? '🇮🇩' : '🇺🇸',
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+          ),
           const SizedBox(height: 24),
-          _buildSectionHeader('Data'),
+          _buildSectionHeader(loc.languageCode == 'id' ? 'DATA' : 'DATA'),
           _buildSettingsTile(
             context,
             icon: Icons.backup_outlined,
-            title: 'Backup Data Lokal',
-            subtitle: 'Ekspor atau Impor data akun',
-            onTap: () => _showBackupOptions(context),
+            title: loc.languageCode == 'id' ? 'Backup Data Lokal' : 'Local Data Backup',
+            subtitle: loc.languageCode == 'id' ? 'Ekspor atau Impor data akun' : 'Export or Import account data',
+            onTap: () => _showBackupOptions(context, loc),
           ),
           _buildSettingsTile(
             context,
             icon: Icons.delete_forever_rounded,
-            title: 'Hapus Semua Data',
-            subtitle: 'Zona Bahaya',
+            title: loc.languageCode == 'id' ? 'Hapus Semua Data' : 'Clear All Data',
+            subtitle: loc.languageCode == 'id' ? 'Zona Bahaya' : 'Danger Zone',
             iconColor: Colors.redAccent,
-            onTap: () => _showDeleteAllDialog(context),
+            onTap: () => _showDeleteAllDialog(context, loc),
           ),
           const SizedBox(height: 40),
-          _buildAuthorFooter(),
+          _buildAuthorFooter(loc),
           const SizedBox(height: 24),
         ],
       ),
     );
   }
 
-  Widget _buildAuthorFooter() {
-    final isDark = true; // Use fixed dark style for footer as it looks more premium, or adapt it
+  void _showLanguagePicker(BuildContext context, SettingsProvider settings, AppLocalization loc) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardTheme.color,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              loc.translate('change_lang_title'),
+              style: GoogleFonts.outfit(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            const SizedBox(height: 20),
+            _buildLanguageItem(context, 'Bahasa Indonesia', 'id', '🇮🇩', settings),
+            const SizedBox(height: 8),
+            _buildLanguageItem(context, 'English', 'en', '🇺🇸', settings),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageItem(BuildContext context, String title, String code, String flag, SettingsProvider settings) {
+    final isSelected = settings.currentLanguage == code;
+    return InkWell(
+      onTap: () {
+        settings.setLanguage(code);
+        Navigator.pop(context);
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? Theme.of(context).colorScheme.primary.withAlpha(20) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 24)),
+            const SizedBox(width: 16),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            const Spacer(),
+            if (isSelected)
+              Icon(Icons.check_circle_rounded, color: Theme.of(context).colorScheme.primary),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAuthorFooter(AppLocalization loc) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -99,7 +191,7 @@ class SettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Crafted with Passion',
+            loc.languageCode == 'id' ? 'Dibuat dengan Sepenuh Hati' : 'Crafted with Passion',
             style: TextStyle(
               fontSize: 13,
               color: Colors.grey[500],
@@ -214,7 +306,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  void _showBackupOptions(BuildContext context) {
+  void _showBackupOptions(BuildContext context, AppLocalization loc) {
     final accountProvider = context.read<AccountProvider>();
 
     showModalBottomSheet(
@@ -246,8 +338,8 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 child: const Icon(Icons.upload_rounded, color: Colors.blue),
               ),
-              title: Text('Ekspor Data (Backup)', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
-              subtitle: Text('Simpan akun sebagai file JSON', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(150))),
+              title: Text(loc.languageCode == 'id' ? 'Ekspor Data (Backup)' : 'Export Data (Backup)', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+              subtitle: Text(loc.languageCode == 'id' ? 'Simpan akun sebagai file JSON' : 'Save accounts as JSON file', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(150))),
               onTap: () async {
                 // Tutup BottomSheet dulu
                 Navigator.pop(context);
@@ -259,11 +351,11 @@ class SettingsScreen extends StatelessWidget {
                 
                 if (result == 'success') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Backup Berhasil! Data sudah diekspor.')),
+                    SnackBar(content: Text(loc.languageCode == 'id' ? 'Backup Berhasil!' : 'Backup Successful!')),
                   );
                 } else if (result == 'empty') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Belum ada data untuk di-backup.')),
+                    SnackBar(content: Text(loc.translate('stats_no_data'))),
                   );
                 } else if (result != null) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -282,8 +374,8 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 child: const Icon(Icons.download_rounded, color: Colors.green),
               ),
-              title: Text('Impor Data (Restore)', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
-              subtitle: Text('Pulihkan akun dari file JSON', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(150))),
+              title: Text(loc.languageCode == 'id' ? 'Impor Data (Restore)' : 'Import Data (Restore)', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+              subtitle: Text(loc.languageCode == 'id' ? 'Pulihkan akun dari file JSON' : 'Restore accounts from JSON file', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha(150))),
               onTap: () async {
                 // Tutup BottomSheet dulu
                 Navigator.pop(context);
@@ -293,19 +385,9 @@ class SettingsScreen extends StatelessWidget {
                 // Cek hasil import
                 if (!context.mounted) return;
                 
-                if (result.toLowerCase().contains('successfully')) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(result)),
-                  );
-                } else if (result.contains('No new accounts')) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Impor Selesai. Tidak ada data baru.')),
-                  );
-                } else if (result != 'cancelled') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(result)),
-                  );
-                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(result)),
+                );
               },
             ),
             const SizedBox(height: 16),
@@ -316,17 +398,21 @@ class SettingsScreen extends StatelessWidget {
   }
 
 
-  void _showDeleteAllDialog(BuildContext context) {
+  void _showDeleteAllDialog(BuildContext context, AppLocalization loc) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Theme.of(context).cardTheme.color,
-        title: Text('Hapus Semua Data?', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
-        content: Text('Tindakan ini tidak dapat dibatalkan. Semua akun tersimpan akan hilang.', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180))),
+        title: Text(loc.translate('delete_title'), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color)),
+        content: Text(
+          loc.languageCode == 'id' 
+            ? 'Tindakan ini tidak dapat dibatalkan. Semua akun tersimpan akan hilang.' 
+            : 'This action cannot be undone. All saved accounts will be lost.', 
+          style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(180))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Batal', style: TextStyle(color: Theme.of(context).disabledColor)),
+            child: Text(loc.translate('cancel'), style: TextStyle(color: Theme.of(context).disabledColor)),
           ),
           TextButton(
             onPressed: () async {
@@ -335,11 +421,11 @@ class SettingsScreen extends StatelessWidget {
               if (context.mounted) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Semua data berhasil dihapus!')),
+                  SnackBar(content: Text(loc.languageCode == 'id' ? 'Semua data berhasil dihapus!' : 'All data cleared successfully!')),
                 );
               }
             },
-            child: const Text('Hapus Sekarang', style: TextStyle(color: Colors.redAccent)),
+            child: Text(loc.translate('delete'), style: const TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),

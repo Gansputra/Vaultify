@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/account_provider.dart';
+import '../providers/settings_provider.dart';
+import '../services/localization_service.dart';
 import '../widgets/account_card.dart';
 import 'add_account_screen.dart';
 import 'settings_screen.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,9 +36,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Vaultify'),
+        title: Text(loc.translate('app_name')),
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 80), // Move FAB up
@@ -48,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(builder: (context) => const AddAccountScreen()),
             );
           },
-          label: const Text('Tambah Akun'),
+          label: Text(loc.translate('add_account')),
           icon: const Icon(Icons.add_rounded),
         ).animate().scale(delay: 500.ms),
       ),
@@ -62,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.read<AccountProvider>().setSearchQuery(value);
               },
               decoration: InputDecoration(
-                hintText: 'Cari Akun...',
+                hintText: loc.translate('search_hint'),
                 prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF6C63FF)),
                 filled: true,
                 fillColor: Theme.of(context).cardTheme.color,
@@ -95,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Belum Ada Akun Tersimpan',
+                            loc.translate('no_accounts'),
                             style: TextStyle(
                               color: Theme.of(context).disabledColor,
                               fontSize: 18,

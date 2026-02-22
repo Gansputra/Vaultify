@@ -5,6 +5,8 @@ import 'home_screen.dart';
 import 'settings_screen.dart';
 import 'statistics_screen.dart';
 import 'password_generator_screen.dart';
+import '../providers/settings_provider.dart';
+import '../services/localization_service.dart';
 import 'dart:ui';
 
 class MainWrapper extends StatefulWidget {
@@ -17,13 +19,6 @@ class MainWrapper extends StatefulWidget {
 class _MainWrapperState extends State<MainWrapper> {
   int _selectedIndex = 0;
   late PageController _pageController;
-
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const PasswordGeneratorScreen(),
-    const StatisticsScreen(),
-    const SettingsScreen(),
-  ];
 
   @override
   void initState() {
@@ -54,6 +49,15 @@ class _MainWrapperState extends State<MainWrapper> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final settings = context.watch<SettingsProvider>();
+    final loc = AppLocalization(settings.currentLanguage);
+    
+    final List<Widget> screens = [
+      const HomeScreen(),
+      const PasswordGeneratorScreen(),
+      const StatisticsScreen(),
+      const SettingsScreen(),
+    ];
     
     return Scaffold(
       body: Stack(
@@ -61,7 +65,7 @@ class _MainWrapperState extends State<MainWrapper> {
           PageView(
             controller: _pageController,
             physics: const NeverScrollableScrollPhysics(), // Disable swipe to keep it clean
-            children: _screens,
+            children: screens,
           ),
           
           // Modern Floating Navbar
@@ -94,10 +98,10 @@ class _MainWrapperState extends State<MainWrapper> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildNavItem(0, Icons.grid_view_rounded, 'Vault'),
-                      _buildNavItem(1, Icons.vpn_key_rounded, 'Keys'),
-                      _buildNavItem(2, Icons.analytics_rounded, 'Stats'),
-                      _buildNavItem(3, Icons.settings_rounded, 'Setup'),
+                      _buildNavItem(0, Icons.grid_view_rounded, loc.translate('nav_vault')),
+                      _buildNavItem(1, Icons.vpn_key_rounded, loc.translate('nav_keys')),
+                      _buildNavItem(2, Icons.analytics_rounded, loc.translate('nav_stats')),
+                      _buildNavItem(3, Icons.settings_rounded, loc.translate('nav_setup')),
                     ],
                   ),
                 ),

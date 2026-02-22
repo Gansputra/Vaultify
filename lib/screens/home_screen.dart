@@ -38,28 +38,20 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Vaultify'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const SettingsScreen()),
-              );
-            },
-            icon: const Icon(Icons.settings_outlined),
-          ),
-        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddAccountScreen()),
-          );
-        },
-        label: const Text('Tambah Akun'),
-        icon: const Icon(Icons.add_rounded),
-      ).animate().scale(delay: 500.ms),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 80), // Move FAB up
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddAccountScreen()),
+            );
+          },
+          label: const Text('Tambah Akun'),
+          icon: const Icon(Icons.add_rounded),
+        ).animate().scale(delay: 500.ms),
+      ),
       body: Column(
         children: [
           Padding(
@@ -91,30 +83,33 @@ class _HomeScreenState extends State<HomeScreen> {
               builder: (context, provider, child) {
                 if (provider.accounts.isEmpty) {
                   return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.security_rounded,
-                          size: 100,
-                          color: Theme.of(context).disabledColor.withAlpha(50),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Belum Ada Akun Tersimpan',
-                          style: TextStyle(
-                            color: Theme.of(context).disabledColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 150),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.security_rounded,
+                            size: 100,
+                            color: Theme.of(context).disabledColor.withAlpha(50),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+                          Text(
+                            'Belum Ada Akun Tersimpan',
+                            style: TextStyle(
+                              color: Theme.of(context).disabledColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ).animate().fadeIn();
                 }
 
                 return ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 120),
                   itemCount: provider.accounts.length,
                   itemBuilder: (context, index) {
                     final account = provider.accounts[index];
